@@ -1,0 +1,97 @@
+Project survey_api {
+  database_type: "PostgreSQL"
+  note: "Checkpoint 1 schema"
+}
+
+Enum survey_status {
+  draft
+  published
+  closed
+}
+
+Enum question_type {
+  single_choice
+  multiple_choice
+  text
+}
+
+Table users {
+  id uuid [pk]
+  email text [not null, unique]
+  password_hash text [not null]
+  display_name text [not null]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table surveys {
+  id uuid [pk]
+  author_id uuid [not null, ref: > users.id]
+  title text [not null]
+  description text
+  status survey_status [not null, default: "draft"]
+  published_at timestamptz
+  closed_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table questions {
+  id uuid [pk]
+  survey_id uuid [not null, ref: > surveys.id]
+  type question_type [not null]
+  prompt text [not null]
+  position int [not null]
+  is_required bool [not null, default: true]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  indexes {
+    (survey_id, position) [unique]
+  }
+}
+
+Table question_options {
+  id uuid [pk]
+  question_id uuid [not null, ref: > questions.id]
+  label text [not null]
+  position int [not null]
+  created_at timestamptz [not null]
+
+  indexes {
+    (question_id, position) [unique]
+  }
+}
+
+Table responses {
+  id uuid [pk]
+  survey_id uuid [not null, ref: > surveys.id]
+  respondent_id uuid [not null, ref: > users.id]
+  submitted_at timestamptz [not null]
+
+  indexes {
+    (survey_id, respondent_id) [unique]
+  }
+}
+
+Table answers {
+  id uuid [pk]
+  response_id uuid [not null, ref: > responses.id]
+  question_id uuid [not null, ref: > questions.id]
+  text_value text
+  created_at timestamptz [not null]
+
+  indexes {
+    (response_id, question_id) [unique]
+  }
+}
+
+Table answer_options {
+  answer_id uuid [not null, ref: > answers.id]
+  option_id uuid [not null, ref: > question_options.id]
+
+  indexes {
+    (answer_id, option_id) [pk]
+  }
+}
+
