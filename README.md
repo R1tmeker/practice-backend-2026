@@ -52,7 +52,7 @@ npm install
 2. Поднять PostgreSQL:
 
 ```bash
-docker compose up -d db
+docker compose -p survey_api up -d db
 ```
 
 3. Скопировать окружение:
