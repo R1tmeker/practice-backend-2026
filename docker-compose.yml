@@ -1,4 +1,18 @@
 services:
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgres://survey_user:survey_password@db:5432/survey_api
+      JWT_SECRET: change-me-in-production
+      TOKEN_TTL_SECONDS: 86400
+    ports:
+      - "3000:3000"
+    command: sh -c "npm run migrate && npm start"
+
   db:
     image: postgres:16-alpine
     environment:
@@ -7,9 +21,14 @@ services:
       POSTGRES_PASSWORD: survey_password
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U survey_user -d survey_api"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - ./docker/db/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
 
 volumes:
   pg_data:
-

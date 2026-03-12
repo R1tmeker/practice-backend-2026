@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "migrate": "node scripts/migrate.js"
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test --test-isolation=none --test-concurrency=1 tests/**/*.test.js"
   },
   "engines": {
     "node": ">=22"
@@ -17,4 +19,3 @@
     "pg": "^8.16.3"
   }
 }
-

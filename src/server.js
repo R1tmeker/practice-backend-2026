@@ -1,8 +1,8 @@
 const app = require("./app");
+const config = require("./config");
 
-const port = Number(process.env.PORT || 3000);
-
-app.listen(port, () => {
-  console.log(`Survey API is running on port ${port}`);
+const server = app.listen(config.port, () => {
+  console.log(`Survey API is running on port ${config.port}`);
 });
 
+module.exports = server;
