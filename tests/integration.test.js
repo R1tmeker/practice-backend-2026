@@ -137,7 +137,9 @@ test.beforeEach(async () => {
 });
 
 test.after(async () => {
-  await new Promise((resolve) => server.close(resolve));
+  if (server) {
+    await new Promise((resolve) => server.close(resolve));
+  }
   await db.close();
 });
 
@@ -333,4 +335,3 @@ test("builds analytics with counts, percentages and text answers", async () => {
   );
   assert.equal(textQuestion.textAnswers[0].value, "More planning transparency");
 });
-
